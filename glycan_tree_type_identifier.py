@@ -64,7 +64,7 @@ def get_linkages(WURCS: str):
     :param WURCS: The WURCS string from which linkages need to be extracted.
     :return: A list of linkages found in the WURCS string.
     """
-    linkage_regex = "[[a-z]{1}[0-9]{1}-{1}[a-z]{1}[0-9]"
+    linkage_regex = "[a-z]{1}[0-9]{1}-{1}[a-z]{1}[0-9]"
     linkages = re.findall(linkage_regex, WURCS)
     return linkages
 
@@ -81,11 +81,13 @@ def organise_linkages(linkages: List[str]):
         donor, acceptor = linkage.split("-")
         links.setdefault(donor[0], []).append(acceptor[0])
 
-    print(links)
-
+    ### Added count so the branchpoint is set as the first node ###
+    ### rather than last node, which lead to branches being wrong ###
+    node_count = 0
     for k, v in links.items(): 
-        if len(v) > 1:
+        if len(v) > 1 and node_count == 0:
             branchpoint = k 
+            node_count =+1 
 
     def search(node, curr): 
         if node not in links: 
@@ -126,7 +128,7 @@ def branches_to_sugars(branches: List, sugar_alphabet_map: dict):
         tmp = []
         for alphabet in branch:
             tmp.append(sugar_alphabet_map[alphabet])
-        sugar_branches.append(tmp)
+        sugar_branches.append(tmp)    
     return sugar_branches
 
 def check_type(WURCS: str):
@@ -157,7 +159,6 @@ def check_type(WURCS: str):
 
     ### Correspond sugar names to their order ###
     sugar_list = [sugars[int(num) - 1] for num in order]
-    # print(sugar_list)
 
     ### Identify whether the glycan tree is high mannose or not, by seeing if any ###
     ### MAN/BMA residues are found in the list after the first MAN residue is found ###
@@ -177,6 +178,7 @@ def check_type(WURCS: str):
     branches = branches_to_sugars(branches=branches, sugar_alphabet_map=sugar_alphabet_map)    
 
     # Check how many of the branches are mannose only, if any of them are, then it is a hybrid otherwise it is complex
+        
     mannose_only_branches = 0
     for branch in branches:
         if list(set(branch)) == ["MAN"]:
@@ -186,8 +188,6 @@ def check_type(WURCS: str):
         return "Hybrid"
 
     return "Complex"
-
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -207,5 +207,5 @@ if __name__ == "__main__":
 
     branched = "WURCS=2.0/3,11,10/[a2122h-1b_1-5_2*NCC/3=O][a1122h-1b_1-5][a1122h-1a_1-5]/1-1-2-3-3-3-3-3-3-3-3/a4-b1_b4-c1_c3-d1_c6-g1_d2-e1_e2-f1_g3-h1_g6-j1_h2-i1_j2-k1"
 
-    result = check_type(branched)
+    result = check_type(hyb)
     print(result)
