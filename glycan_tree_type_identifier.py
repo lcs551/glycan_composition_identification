@@ -82,12 +82,15 @@ def organise_linkages(linkages: List[str]):
         links.setdefault(donor[0], []).append(acceptor[0])
 
     ### Added count so the branchpoint is set as the first node ###
-    ### rather than last node, which lead to branches being wrong ###
+    ### rather than last node, which lead to branches being wrong ###    
     node_count = 0
     for k, v in links.items(): 
         if len(v) > 1 and node_count == 0:
             branchpoint = k 
             node_count =+1 
+
+        else:
+            return # need else statement, otherwise doesn't work for linear glycans
 
     def search(node, curr): 
         if node not in links: 
@@ -206,6 +209,7 @@ if __name__ == "__main__":
     complex = "WURCS=2.0/3,7,6/[a2122h-1b_1-5_2*NCC/3=O][a1122h-1b_1-5][a1122h-1a_1-5]/1-1-2-3-1-3-1/a4-b1_b4-c1_c3-d1_c6-f1_d2-e1_f2-g1"
     hyb= "WURCS=2.0/4,8,7/[a2122h-1b_1-5_2*NCC/3=O][a1122h-1b_1-5][a1122h-1a_1-5][a2112h-1b_1-5]/1-2-3-1-4-3-3-3/a4-b1_b3-c1_b6-f1_c2-d1_d4-e1_f3-g1_f6-h1"
     hm_branched = "WURCS=2.0/3,11,10/[a2122h-1b_1-5_2*NCC/3=O][a1122h-1b_1-5][a1122h-1a_1-5]/1-1-2-3-3-3-3-3-3-3-3/a4-b1_b4-c1_c3-d1_c6-g1_d2-e1_e2-f1_g3-h1_g6-j1_h2-i1_j2-k1"
+    hm_linear = "WURCS=2.0/3,6,5/[a2122h-1b_1-5_2*NCC/3=O][a1122h-1b_1-5][a1122h-1a_1-5]/1-1-2-3-3-3/a4-b1_b4-c1_c3-d1_d2-e1_e2-f1"
 
     result = check_type(user_wurcs)
     print(result)
