@@ -1,4 +1,3 @@
-# Take .csv of WURCS and returns glycan tree type (using glycan_tree_type_identifier)
 import argparse
 import csv
 from glycan_tree_type_identifier import check_type
@@ -6,28 +5,27 @@ from glycan_tree_type_identifier import check_type
 def process_csv(input_csv, output_csv):
     with open(input_csv, 'r') as infile, open(output_csv, 'w', newline='') as outfile:
         reader = csv.reader(infile)
-        header = next(reader, None)  # Read the header if present
+        header = next(reader, None) 
 
-        # Add a new column 'Results' to the header
+        wurcs_index = header.index('WURCS')
+
         header_with_results = header + ['Results']
 
         writer = csv.writer(outfile)
-        writer.writerow(header_with_results)  # Write the modified header
+        writer.writerow(header_with_results) 
 
         for row in reader:
-            wurcs_code = row[0]
+            wurcs_code = row[wurcs_index]
             user_wurcs = f'"{wurcs_code}"'
+
             result = check_type(user_wurcs)
-            
-            # Add the result to the row
             row_with_result = row + [result]
-            
-            writer.writerow(row_with_result)  # Write the row with the result
+            writer.writerow(row_with_result)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog="glycan_composition_identification",
-        description="""Identify whether your glycan tree is high mannose, complex or hybrid."""
+        description="""Identify whether your glycan tree is high mannose, complex, or hybrid."""
     )
     parser.add_argument(
         "-i",
