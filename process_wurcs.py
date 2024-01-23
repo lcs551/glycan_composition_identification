@@ -1,3 +1,6 @@
+# Take a .csv of multiple WURCS and add result from glycan_tree_type_identified
+# python process_wurcs -i file.csv -o output.csv
+
 import argparse
 import csv
 from glycan_tree_type_identifier import check_type
