@@ -88,6 +88,8 @@ def organise_linkages(linkages: List[str]):
         if len(v) > 1 and node_count == 0:
             branchpoint = k 
             node_count =+1 
+        else:
+            return # It is a linear glycan chain
 
     def search(node, curr): 
         if node not in links: 
@@ -140,8 +142,21 @@ def check_type(WURCS: str):
 
     """
     sugars = get_unique_sugars(WURCS=WURCS)
-    linkages = get_linkages(WURCS=WURCS)
     order = get_sugar_order(WURCS=WURCS)
+    sugar_list = [sugars[int(num) - 1] for num in order] # Correspond sugar names to their order
+    suitable_glycan = 0
+
+    # Check if there is a suitable glycan core: 
+    # Must have MAN/BMA residue to be long enough to be considered (excludes glycan chains of just NAG or NAG, NAG)
+    # Also excludes e.g. 6DTU where 'glycan' cain is GLC,GLC,GLC,GLC
+    for sugar in sugar_list:
+        if sugar == 'MAN' or sugar == 'BMA':
+            suitable_glycan +=1            
+    
+    if suitable_glycan == 0:
+        return "Unsuitable core glycan"
+
+    linkages = get_linkages(WURCS=WURCS)
     branches = organise_linkages(linkages=linkages)
 
     sugar_map = {}
@@ -156,10 +171,6 @@ def check_type(WURCS: str):
     sugar_alphabet_map = {}
     for k, v in alphabet_map.items(): 
         sugar_alphabet_map[k] = sugar_map[v]
-
-    ### Correspond sugar names to their order ###
-    sugar_list = [sugars[int(num) - 1] for num in order]
-    print(sugar_list)
 
     ### Identify whether the glycan tree is high mannose or not, by seeing if any ###
     ### MAN/BMA residues are found in the list after the first MAN residue is found ###
@@ -209,8 +220,8 @@ if __name__ == "__main__":
     hm_branched = "WURCS=2.0/3,11,10/[a2122h-1b_1-5_2*NCC/3=O][a1122h-1b_1-5][a1122h-1a_1-5]/1-1-2-3-3-3-3-3-3-3-3/a4-b1_b4-c1_c3-d1_c6-g1_d2-e1_e2-f1_g3-h1_g6-j1_h2-i1_j2-k1"
     hm_linear = "WURCS=2.0/3,6,5/[a2122h-1b_1-5_2*NCC/3=O][a1122h-1b_1-5][a1122h-1a_1-5]/1-1-2-3-3-3/a4-b1_b4-c1_c3-d1_d2-e1_e2-f1"
 
-    not_working_one_nag = "WURCS=2.0/1,1,0/[a2122h-1b_1-5_2*NCC/3=O]/1/" 
-    not_working_glc_x4 = "WURCS=2.0/1,4,3/[a2122h-1a_1-5]/1-1-1-1/a4-b1_b4-c1_c4-d1" # GLC, GLC, GLC, GLC
+    unsuitable_one_NAG = "WURCS=2.0/1,1,0/[a2122h-1b_1-5_2*NCC/3=O]/1/" 
+    unsuitable_one_GLC = "WURCS=2.0/1,4,3/[a2122h-1a_1-5]/1-1-1-1/a4-b1_b4-c1_c4-d1" # GLC, GLC, GLC, GLC
 
     result = check_type(user_wurcs)
     print(result)
