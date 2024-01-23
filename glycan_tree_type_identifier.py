@@ -1,3 +1,6 @@
+# Identify whether a glycan tree is high mannose, complex or hybrid.
+# python glycan_tree_type_identified.py --wurcs "WURCS=2.0/1,1,0/[a2122h-1b_1-5_2*NCC/3=O]/1/"
+
 import re
 import argparse
 from typing import List
@@ -83,13 +86,13 @@ def organise_linkages(linkages: List[str]):
 
     ### Added count so the branchpoint is set as the first node ###
     ### rather than last node, which lead to branches being wrong ###    
-    node_count = 0
-    for k, v in links.items(): 
-        if len(v) > 1 and node_count == 0:
-            branchpoint = k 
-            node_count =+1 
-        else:
-            return # It is a linear glycan chain
+    for k, v in links.items():
+        if len(v) > 1:
+            branchpoint = k
+            break
+    else:
+        # This part will be executed if the loop completes without a break
+        return
 
     def search(node, curr): 
         if node not in links: 
@@ -187,6 +190,7 @@ def check_type(WURCS: str):
     if found_man:
         return "High Mannose"
    
+    
     branches = branches_to_sugars(branches=branches, sugar_alphabet_map=sugar_alphabet_map)    
 
     # Check how many of the branches are mannose only, if any of them are, then it is a hybrid otherwise it is complex
@@ -222,6 +226,9 @@ if __name__ == "__main__":
 
     unsuitable_one_NAG = "WURCS=2.0/1,1,0/[a2122h-1b_1-5_2*NCC/3=O]/1/" 
     unsuitable_one_GLC = "WURCS=2.0/1,4,3/[a2122h-1a_1-5]/1-1-1-1/a4-b1_b4-c1_c4-d1" # GLC, GLC, GLC, GLC
+
+    branch_issue_1 = "WURCS=2.0/4,7,6/[a2122h-1b_1-5_2*NCC/3=O][a1221m-1a_1-5][a1122h-1b_1-5][a1122h-1a_1-5]/1-2-1-3-4-4-2/a3-b1_a4-c1_a6-g1_c4-d1_d3-e1_d6-f1"
+    branch_issue_2 = "WURCS=2.0/3,6,5/[a2122h-1b_1-5_2*NCC/3=O][a1122h-1b_1-5][a1122h-1a_1-5]/1-1-2-3-1-3/a4-b1_b4-c1_c3-d1_c6-f1_d2-e1"
 
     result = check_type(user_wurcs)
     print(result)
