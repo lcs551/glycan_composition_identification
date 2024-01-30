@@ -36,6 +36,8 @@ def get_unique_sugars(WURCS: str):
     :param WURCS: The WURCS string to search for unique sugars.
     :return: A list of sugar names corresponding to the unique sugars found in the WURCS string.
     """
+    if 'ERROR' in WURCS:
+        return
     sugar_regex ="\[\S*\]"
     sugars = re.findall(sugar_regex, WURCS)
     x = sugars[0]
@@ -145,6 +147,8 @@ def check_type(WURCS: str):
 
     """
     sugars = get_unique_sugars(WURCS=WURCS)
+    if sugars == None:
+        return "Error producing WURCS string"
     order = get_sugar_order(WURCS=WURCS)
     sugar_list = [sugars[int(num) - 1] for num in order] # Correspond sugar names to their order
     suitable_glycan = 0
@@ -230,5 +234,6 @@ if __name__ == "__main__":
     branch_issue_1 = "WURCS=2.0/4,7,6/[a2122h-1b_1-5_2*NCC/3=O][a1221m-1a_1-5][a1122h-1b_1-5][a1122h-1a_1-5]/1-2-1-3-4-4-2/a3-b1_a4-c1_a6-g1_c4-d1_d3-e1_d6-f1"
     branch_issue_2 = "WURCS=2.0/3,6,5/[a2122h-1b_1-5_2*NCC/3=O][a1122h-1b_1-5][a1122h-1a_1-5]/1-1-2-3-1-3/a4-b1_b4-c1_c3-d1_c6-f1_d2-e1"
 
-    result = check_type(user_wurcs)
+    result = check_type("WURCS=2.0/3,3,2/[a1122h-1a_1-5_1*OC][a1122h-1a_1-5][a2122h-1b_1-5_2*NCC/3=O]/1-2-3/a3-b1_b2-c1"
+)
     print(result)
