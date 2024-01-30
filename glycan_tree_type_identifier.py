@@ -91,7 +91,7 @@ def organise_linkages(linkages: List[str]):
             branchpoint = k
             break
     else:
-        # This part will be executed if the loop completes without a break
+        # Executed if the loop completes without a break aka there are no branches
         return
 
     def search(node, curr): 
@@ -145,10 +145,10 @@ def check_type(WURCS: str):
 
     """
     sugars = get_unique_sugars(WURCS=WURCS)
-    if any(sugar is None for sugar in sugars):
-        return "Sugar WURCS not recognised"
     if sugars == None:
         return "Error producing WURCS string"
+    if any(sugar is None for sugar in sugars):
+        return "Sugar WURCS not recognised"
     order = get_sugar_order(WURCS=WURCS)
     sugar_list = [sugars[int(num) - 1] for num in order] # Correspond sugar names to their order
     suitable_glycan = 0
