@@ -85,9 +85,7 @@ def organise_linkages(linkages: List[str]):
     for linkage in linkages:
         donor, acceptor = linkage.split("-")
         links.setdefault(donor[0], []).append(acceptor[0])
-
-    ### Added count so the branchpoint is set as the first node ###
-    ### rather than last node, which lead to branches being wrong ###    
+     
     for k, v in links.items():
         if len(v) > 1:
             branchpoint = k
@@ -147,6 +145,8 @@ def check_type(WURCS: str):
 
     """
     sugars = get_unique_sugars(WURCS=WURCS)
+    if any(sugar is None for sugar in sugars):
+        return "Sugar WURCS not recognised"
     if sugars == None:
         return "Error producing WURCS string"
     order = get_sugar_order(WURCS=WURCS)
