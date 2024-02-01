@@ -192,13 +192,14 @@ def check_type(WURCS: str):
             found_man = True
 
     if found_man:
-        return "High Mannose"
+        if branches is None:
+            return "Unsuitable core glycan"
+        else:
+            return "High Mannose"
    
-    
     branches = branches_to_sugars(branches=branches, sugar_alphabet_map=sugar_alphabet_map)    
 
     # Check how many of the branches are mannose only, if any of them are, then it is a hybrid otherwise it is complex
-        
     mannose_only_branches = 0
     for branch in branches:
         if list(set(branch)) == ["MAN"]:
@@ -222,18 +223,16 @@ if __name__ == "__main__":
     args = parser.parse_args()
     user_wurcs = args.wurcs
 
+    # Test glycans
     hm = "WURCS=2.0/3,7,6/[a2122h-1b_1-5_2*NCC/3=O][a1122h-1b_1-5][a1122h-1a_1-5]/1-1-2-3-3-3-3/a4-b1_b4-c1_c3-d1_c6-e1_e3-f1_f2-g1"
     complex = "WURCS=2.0/3,7,6/[a2122h-1b_1-5_2*NCC/3=O][a1122h-1b_1-5][a1122h-1a_1-5]/1-1-2-3-1-3-1/a4-b1_b4-c1_c3-d1_c6-f1_d2-e1_f2-g1"
     hyb= "WURCS=2.0/4,8,7/[a2122h-1b_1-5_2*NCC/3=O][a1122h-1b_1-5][a1122h-1a_1-5][a2112h-1b_1-5]/1-2-3-1-4-3-3-3/a4-b1_b3-c1_b6-f1_c2-d1_d4-e1_f3-g1_f6-h1"
     hm_branched = "WURCS=2.0/3,11,10/[a2122h-1b_1-5_2*NCC/3=O][a1122h-1b_1-5][a1122h-1a_1-5]/1-1-2-3-3-3-3-3-3-3-3/a4-b1_b4-c1_c3-d1_c6-g1_d2-e1_e2-f1_g3-h1_g6-j1_h2-i1_j2-k1"
-    hm_linear = "WURCS=2.0/3,6,5/[a2122h-1b_1-5_2*NCC/3=O][a1122h-1b_1-5][a1122h-1a_1-5]/1-1-2-3-3-3/a4-b1_b4-c1_c3-d1_d2-e1_e2-f1"
-
+    hm_linear = "WURCS=2.0/3,6,5/[a2122h-1b_1-5_2*NCC/3=O][a1122h-1b_1-5][a1122h-1a_1-5]/1-1-2-3-3-3/a4-b1_b4-c1_c3-d1_d2-e1_e2-f1" # Should return "Unsuitable", as too short
     unsuitable_one_NAG = "WURCS=2.0/1,1,0/[a2122h-1b_1-5_2*NCC/3=O]/1/" 
     unsuitable_one_GLC = "WURCS=2.0/1,4,3/[a2122h-1a_1-5]/1-1-1-1/a4-b1_b4-c1_c4-d1" # GLC, GLC, GLC, GLC
-
     branch_issue_1 = "WURCS=2.0/4,7,6/[a2122h-1b_1-5_2*NCC/3=O][a1221m-1a_1-5][a1122h-1b_1-5][a1122h-1a_1-5]/1-2-1-3-4-4-2/a3-b1_a4-c1_a6-g1_c4-d1_d3-e1_d6-f1"
     branch_issue_2 = "WURCS=2.0/3,6,5/[a2122h-1b_1-5_2*NCC/3=O][a1122h-1b_1-5][a1122h-1a_1-5]/1-1-2-3-1-3/a4-b1_b4-c1_c3-d1_c6-f1_d2-e1"
 
-    result = check_type("WURCS=2.0/3,3,2/[a1122h-1a_1-5_1*OC][a1122h-1a_1-5][a2122h-1b_1-5_2*NCC/3=O]/1-2-3/a3-b1_b2-c1"
-)
-    print(result)
+    result = check_type(user_wurcs)
+    # print(result)
