@@ -129,11 +129,14 @@ def branches_to_sugars(branches: List, sugar_alphabet_map: dict):
     [['SugarA', 'SugarB', 'SugarC'], ['SugarD', 'SugarE', 'SugarF']]
     """
     sugar_branches = []
-    for branch in branches:
-        tmp = []
-        for alphabet in branch:
-            tmp.append(sugar_alphabet_map[alphabet])
-        sugar_branches.append(tmp)    
+    try:
+        for branch in branches:
+            tmp = []
+            for alphabet in branch:
+                tmp.append(sugar_alphabet_map[alphabet])
+            sugar_branches.append(tmp)   
+    except TypeError:
+        return "Branch error"
     return sugar_branches
 
 def check_type(WURCS: str):
@@ -198,6 +201,8 @@ def check_type(WURCS: str):
             return "High Mannose"
    
     branches = branches_to_sugars(branches=branches, sugar_alphabet_map=sugar_alphabet_map)    
+    if branches == 'Branch error':
+        return branches
 
     # Check how many of the branches are mannose only, if any of them are, then it is a hybrid otherwise it is complex
     mannose_only_branches = 0
