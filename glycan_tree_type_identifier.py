@@ -169,6 +169,10 @@ def check_type(WURCS: str):
     linkages = get_linkages(WURCS=WURCS)
     branches = organise_linkages(linkages=linkages)
 
+    # The glycan must have a branch to be classified, otherwise its too short
+    if branches is None:
+        return "Unsuitable core glycan"
+    
     sugar_map = {}
     alphabet_map = {}
     alphabet = "abcdefghijklmnopqrstuvxyz"
@@ -195,12 +199,16 @@ def check_type(WURCS: str):
             found_man = True
 
     if found_man:
-        if branches is None:
-            return "Unsuitable core glycan"
-        else:
-            return "High Mannose"
+        return "High Mannose"
    
     branches = branches_to_sugars(branches=branches, sugar_alphabet_map=sugar_alphabet_map)    
+
+    # If there is a fucose, it is counted as a branch, but the main chain might still be too short to be classified
+    if len(branches) == 2:
+        for branch in branches:
+            if branch == ["FUC"]:
+                return "Unsuitable core glycan"
+
     if branches == 'Branch error':
         return branches
 
@@ -238,6 +246,7 @@ if __name__ == "__main__":
     unsuitable_one_GLC = "WURCS=2.0/1,4,3/[a2122h-1a_1-5]/1-1-1-1/a4-b1_b4-c1_c4-d1" # GLC, GLC, GLC, GLC
     branch_issue_1 = "WURCS=2.0/4,7,6/[a2122h-1b_1-5_2*NCC/3=O][a1221m-1a_1-5][a1122h-1b_1-5][a1122h-1a_1-5]/1-2-1-3-4-4-2/a3-b1_a4-c1_a6-g1_c4-d1_d3-e1_d6-f1"
     branch_issue_2 = "WURCS=2.0/3,6,5/[a2122h-1b_1-5_2*NCC/3=O][a1122h-1b_1-5][a1122h-1a_1-5]/1-1-2-3-1-3/a4-b1_b4-c1_c3-d1_c6-f1_d2-e1"
+    hm_linear_fucose = "WURCS=2.0/3,4,3/[a2122h-1b_1-5_2*NCC/3=O][a1122h-1b_1-5][a1221m-1a_1-5]/1-1-2-3/a4-b1_a6-d1_b4-c1" # this was being classified as hybrid, it should return unsuitable as its too short to be classified
 
     result = check_type(user_wurcs)
     # print(result)
