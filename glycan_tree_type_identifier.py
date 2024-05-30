@@ -26,7 +26,9 @@ database = {
  "a2112h-1b_1-5_2*NCC/3=O": "NGA",
  "a2112h-1a_1-5_2*NCC/3=O": "A2G",
  "a1122h-1a_1-5_2*NCC/3=O": "BM3",
- "a1122h-1b_1-5_2*NCC/3=O": "BM7"
+ "a1122h-1b_1-5_2*NCC/3=O": "BM7",
+ "Aad21122h-2a_2-6_5*NCC/3=O": "SIA",
+ "Aad21122h-2b_2-6_5*NCC/3=O":"SLB"
  }
 
 def get_unique_sugars(WURCS: str):
@@ -206,7 +208,7 @@ def check_type(WURCS: str):
     # If there is a fucose, it is counted as a branch, but the main chain might still be too short to be classified
     if len(branches) == 2:
         for branch in branches:
-            if branch == ["FUC"]:
+            if branch == ["FUC"] or branch == ["FUL"]:
                 return "Unsuitable core glycan"
 
     if branches == 'Branch error':
