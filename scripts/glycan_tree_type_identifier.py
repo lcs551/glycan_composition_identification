@@ -134,11 +134,13 @@ def check_type(WURCS: str):
         return "Sugar WURCS not recognised"
     order = get_sugar_order(WURCS=WURCS)
     sugar_list = [sugars[int(num) - 1] for num in order] # Correspond sugar names to their order
-    suitable_glycan = 0
 
     # Check if there is a suitable glycan core: 
     # Must have MAN/BMA residue to be long enough to be considered (excludes glycan chains of just NAG or NAG, NAG)
     # Also excludes e.g. 6DTU where 'glycan' cain is GLC,GLC,GLC,GLC
+    
+    suitable_glycan = 0
+    
     for sugar in sugar_list:
         if sugar == 'MAN' or sugar == 'BMA':
             suitable_glycan +=1            
@@ -187,7 +189,7 @@ def check_type(WURCS: str):
     if len(branches) == 2:
         for branch in branches:
             if branch == ["FUC"] or branch == ["FUL"]:
-                return "Unsuitable core glycan"
+                return "Complex"
 
     if branches == 'Branch error':
         return branches
